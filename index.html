@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>功德计数器</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: '楷体', cursive;
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: #fff;
+        }
+
+        #merit-container {
+            position: relative;
+            text-align: center;
+        }
+
+        #counter {
+            font-size: 64px;
+            margin: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .merit-notice {
+            position: absolute;
+            left: 50%;
+            bottom: 100%;
+            font-size: 24px;
+            color: #ffeb3b;
+            opacity: 0;
+            transform: translateX(-50%);
+            animation: meritFloat 1s ease-out forwards;
+        }
+
+        @keyframes meritFloat {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -100px);
+            }
+        }
+
+        .custom-btn {
+            width: 150px;
+            height: 150px;
+            border: none;
+            cursor: pointer;
+            background: url('木鱼猪猪.png') center/cover;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .custom-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .custom-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div id="merit-container">
+        <div id="counter">功德：0</div>
+    </div>
+    <button class="custom-btn" onclick="addMerit()"></button>
+
+    <script>
+        let count = 0;
+        const counterElement = document.getElementById('counter');
+
+        function addMerit() {
+            count++;
+            // 更新主计数器
+            counterElement.textContent = `功德：${count}`;
+            
+            // 创建动态文字
+            const meritText = document.createElement('div');
+            meritText.className = 'merit-notice';
+            meritText.textContent = `功德+1`;
+            
+            // 添加到容器
+            document.getElementById('merit-container').appendChild(meritText);
+            
+            // 自动移除动画元素
+            setTimeout(() => {
+                meritText.remove();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
