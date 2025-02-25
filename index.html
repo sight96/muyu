@@ -2,103 +2,99 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>电子木鱼</title>
+    <title>功德计数器</title>
     <style>
-        /* 自定义光标样式 */
-        html {
-            cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAEkSURBVHgB7ZXBkcMgDEWfE7oADuACOsClC9IF6YJ0QbogXZAuSBe4C1IF6QJkRhp5jB1jY3bH+2dGowX08yQeYIwx5g4KcAC1qgLb2AEnVX2o6gx8AF/Au8q3qgJvwB7Y2I5Q1Y8i8A2cVfW5Jb6q/qlqo6qHIsB6dqp6WhtfVX9V9aSqx5UOWKtX1ZOqHlZ2YFP8TQ5Yqy/VtQ5Yqy/VXx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx2wVl+qLx3wH+IfV5VXQxQ5sIAAAAAASUVORK5CYII=') 16 16, pointer;
-        }
-
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            margin: 0;
-            background: #2c3e50;
-            touch-action: manipulation;
-        }
-
-        .wooden-fish {
-            width: 400px;
-            height: 300px;
-            background: url('木鱼猪猪.png') center/contain no-repeat;
-            position: relative;
-            transition: transform 0.1s;
-        }
-
-        /* 敲击动画 */
-        @keyframes knock {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(10px); }
-            100% { transform: translateY(0); }
-        }
-
-        .knock-effect {
-            animation: knock 0.2s ease;
-        }
-
-        /* 功德显示 */
-        #merit-counter {
-            font-size: 48px;
-            color: #fff;
             font-family: '楷体', cursive;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin-top: 30px;
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: #fff;
+        }
+
+        #merit-container {
+            position: relative;
+            text-align: center;
+        }
+
+        #counter {
+            font-size: 64px;
+            margin: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .merit-notice {
+            position: absolute;
+            left: 50%;
+            bottom: 100%;
+            font-size: 24px;
+            color: #ffeb3b;
+            opacity: 0;
+            transform: translateX(-50%);
+            animation: meritFloat 1s ease-out forwards;
+        }
+
+        @keyframes meritFloat {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -100px);
+            }
+        }
+
+        .custom-btn {
+            width: 150px;
+            height: 150px;
+            border: none;
+            cursor: pointer;
+            background: url('木鱼猪猪.png') center/cover;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .custom-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .custom-btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
-    <div class="wooden-fish" onclick="addMerit()"></div>
-    <div id="merit-counter">功德：0</div>
+    <div id="merit-container">
+        <div id="counter">功德：0</div>
+    </div>
+    <button class="custom-btn" onclick="addMerit()"></button>
 
     <script>
         let count = 0;
-        const counter = document.getElementById('merit-counter');
-        const fish = document.querySelector('.wooden-fish');
+        const counterElement = document.getElementById('counter');
 
         function addMerit() {
             count++;
-            counter.textContent = `功德：${count}`;
+            // 更新主计数器
+            counterElement.textContent = `功德：${count}`;
             
-            // 添加敲击动画
-            fish.classList.add('knock-effect');
+            // 创建动态文字
+            const meritText = document.createElement('div');
+            meritText.className = 'merit-notice';
+            meritText.textContent = `功德+1`;
+            
+            // 添加到容器
+            document.getElementById('merit-container').appendChild(meritText);
+            
+            // 自动移除动画元素
             setTimeout(() => {
-                fish.classList.remove('knock-effect');
-            }, 200);
-
-            // 添加点击特效（参考搜索结果）
-            createParticle(event.clientX, event.clientY);
+                meritText.remove();
+            }, 1000);
         }
-
-        // 粒子特效（功德+1动画）
-        function createParticle(x, y) {
-            const particle = document.createElement('div');
-            particle.style.cssText = `
-                position: fixed;
-                left: ${x}px;
-                top: ${y}px;
-                color: #ffeb3b;
-                font-size: 24px;
-                pointer-events: none;
-                animation: floatUp 1s ease-out;
-            `;
-            particle.textContent = '功德+1';
-            document.body.appendChild(particle);
-            
-            setTimeout(() => particle.remove(), 1000);
-        }
-
-        // 浮动动画
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes floatUp {
-                0% { opacity: 1; transform: translateY(0); }
-                100% { opacity: 0; transform: translateY(-100px); }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
